@@ -16,7 +16,7 @@ attr(predictors, 'scaled:scale')
 
 # extract response and create data frame
 lpsa = training_data[,9]
-df = data.frame(cbind(predictors, response))
+df = data.frame(cbind(predictors, lpsa))
 ln = names(df)
 
 # fit subset size k = 0
@@ -57,3 +57,9 @@ plot(x_points, y_points, xlab = "Subset size k", ylab = "Residual Sum-of-Squares
 #hard-coded
 y_mins[1] = 100
 lines(x_mins, y_mins)
+
+#using leaps package
+library(leaps)
+library(MASS)
+bestsubset = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df, nvmax=8)
+summary(bestsubset)
