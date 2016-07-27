@@ -4,7 +4,7 @@ attach(prostate)
 #summary(prostate)
 #head(prostate)
 
-source('normalize_prostate_data.R')
+source('normalize-prostate-data.R')
 dat = normalize_prostate_data(prostate)
 df_train = dat[[1]]
 df_test = dat[[2]]
