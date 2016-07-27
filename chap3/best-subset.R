@@ -53,5 +53,3 @@ library(leaps)
 library(MASS)
 bestsubset = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df_train, nvmax=8)
 summary(bestsubset)
-
-#it can have a little different with my code due to the normalizing
