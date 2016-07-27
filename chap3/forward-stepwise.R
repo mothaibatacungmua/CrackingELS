@@ -71,3 +71,5 @@ library(leaps)
 library(MASS)
 forward_stepwise = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df, nvmax=8, method="forward")
 summary(forward_stepwise)
+
+#it can have a little different with my code due to the normalizing
