@@ -1,26 +1,17 @@
 library(ElemStatLearn)
 
 attach(prostate)
-summary(prostate)
-head(prostate)
+#summary(prostate)
+#head(prostate)
 
-training_data = prostate[train, ]
-test_data = prostate[train == F, ]
-
-# normalize predictors
-predictors = training_data[,1:8]
-predictors = scale(predictors)
-
-attr(predictors, 'scaled:center')
-attr(predictors, 'scaled:scale')
-
-# extract response and create data frame
-lpsa = training_data[,9] - mean(training_data[,9])
-df = data.frame(cbind(predictors, lpsa))
-ln = names(df)
+source('normalize_prostate_data.R')
+dat = normalize_prostate_data(prostate)
+df_train = dat[[1]]
+df_test = dat[[2]]
+ln = names(df_train)
 
 # fit subset size k = 0
-lm.fit = lm(predictors~+1, data=df)
+lm.fit = lm(predictors~+1, data=df_train)
 rss = sum(lm.fit$residuals^2)
 x_points = c(0) 
 y_points = c(rss)
@@ -37,13 +28,12 @@ for (k in 1:n){
     formu = paste(ln[list_combn[,i]],collapse = "+")
     formu = paste("lpsa~", formu)
     
-    lm.fit = lm(formula = formu, data = df)
+    lm.fit = lm(formula = formu, data = df_train)
     rss = sum(lm.fit$residuals^2)
     x_points = c(x_points, k)
     y_points = c(y_points, rss)
 
     if(rss < y_mins[k+1]){
-      print(rss)
       y_mins[k+1] = rss
     }
   }
@@ -61,7 +51,7 @@ lines(x_mins, y_mins)
 #using leaps package
 library(leaps)
 library(MASS)
-bestsubset = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df, nvmax=8)
+bestsubset = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df_train, nvmax=8)
 summary(bestsubset)
 
 #it can have a little different with my code due to the normalizing

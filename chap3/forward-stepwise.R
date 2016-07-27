@@ -1,28 +1,19 @@
 library(ElemStatLearn)
 
 attach(prostate)
-summary(prostate)
-head(prostate)
+#summary(prostate)
+#head(prostate)
 
-training_data = prostate[train == T, ]
-test_data = prostate[train == F, ]
-
-# normalize predictors
-predictors = training_data[,1:8]
-predictors = scale(predictors)
-
-attr(predictors, 'scaled:center')
-attr(predictors, 'scaled:scale')
-
-# extract response and create data frame
-lpsa = training_data[,9] - mean(training_data[,9])
-df = data.frame(cbind(predictors, lpsa))
-ln = names(df)
+source('normalize_prostate_data.R')
+dat = normalize_prostate_data(prostate)
+df_train = dat[[1]]
+df_test = dat[[2]]
+ln = names(df_train)
 
 # predictors matrix and response vector
-X = model.matrix(~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data = df)
+X = model.matrix(~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data = df_train)
 X = X[,-1]
-y = df$lpsa
+y = df_train$lpsa
 
 #using QR decomposition
 QR <- qr(X)
@@ -70,6 +61,6 @@ text(0:n, save_RSS,labels = c("NULL",adding), cex= 0.7,pos=1)
 #using leaps package in short
 library(leaps)
 library(MASS)
-forward_stepwise = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df, nvmax=8, method="forward")
+forward_stepwise = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df_train, nvmax=8, method="forward")
 summary(forward_stepwise)
 
