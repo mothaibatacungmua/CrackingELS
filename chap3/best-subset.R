@@ -15,7 +15,7 @@ attr(predictors, 'scaled:center')
 attr(predictors, 'scaled:scale')
 
 # extract response and create data frame
-lpsa = training_data[,9]
+lpsa = training_data[,9] - mean(training_data[,9])
 df = data.frame(cbind(predictors, lpsa))
 ln = names(df)
 

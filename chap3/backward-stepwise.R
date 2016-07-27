@@ -15,16 +15,21 @@ attr(predictors, 'scaled:center')
 attr(predictors, 'scaled:scale')
 
 # extract response and create data frame
-lpsa = training_data[,9]
+lpsa = training_data[,9] - mean(training_data[,9])
 df = data.frame(cbind(predictors, lpsa))
 ln = names(df)
+
+# predictors matrix and response vector
+X = model.matrix(~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data = df)
+X = X[,-1]
+y = df$lpsa
 
 #using QR decomposition
 QR <- qr(X)
 Q <- qr.Q(QR)
 R <- qr.Q(QR)
 
-ln_w_i = c("Interpret", ln[1:8])
+ln_w_i = ln[1:8]
 removed_set = c()
 current_RSS = y - Q %*% crossprod(Q, y)
 save_RSS = c(crossprod(current_RSS, current_RSS))
@@ -56,19 +61,17 @@ for(i in 1:p){
 print(removed_set)
 print(save_RSS)
 
-plot(0:9, save_RSS, 
+plot(0:n, save_RSS, 
      xlab = "Number of variables in the removed set", 
      ylab = "Residual Sum-of-Squares",
-     xlim=c(0,9), ylim=c(0,max(save_RSS)), 
+     xlim=c(0,n), ylim=c(0,max(save_RSS)), 
      pch=21,bg="black")
-lines(0:9, save_RSS)
+lines(0:n, save_RSS)
 adding = paste("-",removed_set)
-text(0:9, save_RSS,labels = c("NULL", adding), cex= 0.7,pos=1)
+text(0:n, save_RSS,labels = c("NULL", adding), cex= 0.7,pos=1)
 
 #using leaps package in short
 library(leaps)
 library(MASS)
 backward_stepwise = regsubsets(lpsa~lcavol+lweight+age+lbph+svi+lcp+gleason+pgg45, data=df, nvmax=8, method="backward")
 summary(backward_stepwise)
-
-#it can have a little different with my code due to the normalizing
