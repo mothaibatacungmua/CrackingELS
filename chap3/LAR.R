@@ -33,6 +33,8 @@ find_min_positive <- function(v1, v2){
 
 look_ahead <- function(c_max, vec_a_k, inactive_set, corr){
   # The following code due to the solution of the exercie 3.25(ESL), it's the look-ahead properties of LAR
+  if(length(inactive_set) == 0)
+    return(list(min_line=NULL, min_value=1))
   
   #print(inactive_set)
   m_i = inactive_set[1]
@@ -58,31 +60,26 @@ look_ahead <- function(c_max, vec_a_k, inactive_set, corr){
   return(list(min_line=m_i, min_value=vl))
 } 
 
-
-lars <- function(X, y, lasso_modif){
+lars <- function(X, y){
   # init input
   ln_w_i = colnames(X)
   p = ncol(X)
   current_rss = y
-  beta = c()
-  active_names = c()
-  active_X = matrix()
   inactive_set = 1:p
   active_set = c()
-  l1_norm = 0
   recorder = matrix(rep(0, p+1), nrow = 1)
   
   # step 1: find the most correlated variable with r
   corr = t(X) %*% current_rss
   argmax = which.max(abs(corr))
-  active_names = c(active_names, ln_w_i[argmax])
   active_set = c(argmax)
   inactive_set = inactive_set[-which(inactive_set==argmax)]
-  active_X = matrix(X[,argmax], ncol=1)
-  beta = c(0)
+  beta = rep(0, p)
+  last_update = FALSE
   
   # step 2: moving beta and adding the remain variables
-  while(length(active_set) != p){
+  while(length(active_set) != p || !last_update){
+    active_X = as.matrix(X[,active_set])
     c_max = abs(corr[argmax])
     #browser()
     # caculate delta
@@ -96,35 +93,28 @@ lars <- function(X, y, lasso_modif){
     vl = ret$min_value
     
     
-    # update beta and track L1-norm
-    beta = beta + vl*direction
-    l1_norm = l1_norm + sum(abs(beta))
-    recorder = rbind(recorder, c(beta, rep(0,p-length(beta)), l1_norm))
-    beta = c(beta, 0)
+    last_update = is.null(m_i)
+    
+    # update beta and track L1-norm)
+    beta[active_set] = beta[active_set] + vl*direction
+    l1_norm = sum(abs(beta))
+    recorder = rbind(recorder, c(beta, l1_norm))
+    
+    # update active set
+    active_set = c(active_set, m_i)
+    inactive_set = inactive_set[-which(inactive_set==m_i)]
     
     # update current rss
     current_rss = current_rss - vl*fit_direction
-    
-    # update active set
-    active_names = c(active_names, ln_w_i[m_i])
-    active_set = c(active_set, m_i)
-    inactive_set = inactive_set[-which(inactive_set==m_i)]
-    active_X = cbind(active_X, X[,m_i])
 
     # update correlation vector
     corr = t(X) %*% current_rss
     
-    # step 3: last update, we need to perform this step to correct beta coefficients
-    if(length(active_set) == p){
-      beta = beta + ginv(crossprod(active_X, active_X)) %*% t(active_X) %*% current_rss
-      l1_norm = l1_norm + sum(abs(beta))
-      recorder = rbind(recorder, c(beta, rep(0,p-length(beta)), l1_norm))
-    }
   } 
   
-  colnames(recorder) = c(active_names, "L1-norm")
+  colnames(recorder) = c(ln_w_i, "L1-norm")
   
-  return(list(beta=beta, recorder=recorder,active_names=active_names))
+  return(list(beta=beta, recorder=recorder))
 }
 
 lars_plot <- function(beta, recorder){
@@ -160,13 +150,12 @@ lars_plot <- function(beta, recorder){
   }
   
   title("Least Angle Regression")
-  legend(max_l1_norm+0.5, 0.75, inset=c(-0.2,0), 
+  
+  legend(max_l1_norm*1.2, max_beta, inset=c(-0.2,0), 
          legend=colnames(recorder[,1:p]), 
          cex = 0.5, col = colors, lty=1, title = "coefs")
-  
 }
 
-ret = lars(X,y,TRUE)
+ret = lars(X,y)
 print(ret$beta)
-print(ret$active_names)
 lars_plot(ret$beta, ret$recorder)

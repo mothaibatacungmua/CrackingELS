@@ -90,13 +90,13 @@ fstaw_plot <- function(beta, recorder){
   }
   
   title("Forward Stagewise Regression")
-  legend(max_l1_norm+0.5, 0.75, inset=c(-0.2,0), 
+  legend(max_l1_norm*1.2, max_beta, inset=c(-0.2,0), 
          legend=colnames(recorder[,1:p]), 
          cex = 0.5, col = colors, lty=1, title = "coefs")
   
 }
 
-epsilon = 0.001
-max_iter = 30000
+epsilon = 0.01
+max_iter = 300000
 ret = forward_stagewise(X, y, epsilon, max_iter)
 fstaw_plot(ret$beta, ret$recorder)
