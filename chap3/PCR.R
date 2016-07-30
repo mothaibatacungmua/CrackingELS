@@ -52,14 +52,14 @@ NIPALS <- function(X){
   
   while(loop_count < ncol(X)){
     while(TRUE){
-      prev_t = t_h
-      p_h = crossprod(save_X, t_h)/as.numeric(crossprod(t_h, t_h))
-      p_h = p_h/sqrt(as.numeric(crossprod(p_h, p_h)))
-      t_h = (X%*%p_h)
+      prev_t = t
+      p = crossprod(save_X, t)/as.numeric(crossprod(t, t))
+      p = p/norm(p, type="2")
+      t = X%*%p
       
-      if(sqrt(crossprod(prev_t-t_h, prev_t-t_h)) < 1e-8){
-        save_X = save_X - t_h %*% t(p_h)
-        P = c(P, p_h)
+      if(norm(prev_t - t, type="2") < 1e-8){
+        save_X = save_X - t %*% t(p)
+        P = c(P, p)
         loop_count = loop_count + 1
         break
       }
@@ -73,6 +73,6 @@ NIPALS <- function(X){
 
 P = NIPALS(X)
 Z = X %*% P
-beta = c(mean(y), crossprod(Z,y)/diag(crossprod(Z,Z)))
+beta = crossprod(Z,y)/diag(crossprod(Z,Z))
 beta_pcr = P %*% beta
 
