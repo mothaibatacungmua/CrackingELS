@@ -29,7 +29,6 @@ PLS <- function(X, y){
     w = crossprod(save_X,u)/norm(crossprod(save_X,u),type = "2")
     t = save_X %*% w
     p = crossprod(save_X, t)/as.numeric(crossprod(t, t))
-    print(norm(p,type="2"))
     save_X = save_X - t%*%t(p)
     T = c(T, t)
     P = c(P, p)
