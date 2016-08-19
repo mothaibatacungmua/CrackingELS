@@ -29,7 +29,7 @@ subgrad_lasso <- function(X, y, lambda, learning_rate = 0.001, max_iter=100000){
  
  prev_value = 0
  next_value = cost_fn(X, y, betas, lambda)
- count_loop = 0
+ count_loop = 1
  step = learning_rate
  monitor_cost = c(monitor_cost, next_value)
  
