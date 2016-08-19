@@ -1,3 +1,4 @@
+#based on code on the statistic course: http://www.stat.rice.edu/~gallen/stat640.html
 library(class)
 
 set.seed(1)
