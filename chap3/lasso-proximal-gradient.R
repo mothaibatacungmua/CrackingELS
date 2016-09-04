@@ -18,7 +18,7 @@ prox_map <- function(betas, t){
   return(soft_thresholding(betas, t))
 }
 
-prox_lasso <- function(X, y, lambda, learning_rate = 0.001, max_iter=100000, thres=1e-8){
+prox_lasso <- function(X, y, lambda, learning_rate = 0.001, max_iter=10000, thres=1e-8){
   monitor_cost = c()
   betas = rnorm(ncol(X),sd=5)/sum(sum(X))
   prev_value = 0
@@ -104,4 +104,6 @@ y = floor(runif(5, 1, 20))
 X = cbind(rep(1,5),X) # adding interpret
 ret = prox_lasso(X,y,0.6)
 n_iter = length(ret$monitor)
-plot(1:10000, ret$monitor[1:10000], type = "l", main = "Proximal Gradient", xlab = "Iterations", ylab = "Cost")
+plot(1:5000, ret$monitor[1:5000], type = "l", main = "Proximal Gradient", xlab = "Iterations", ylab = "Cost")
+rr = NAG_prox_lasso(X,y,0.6)
+points(1:5000, rr$monitor[1:5000], type = "l")
