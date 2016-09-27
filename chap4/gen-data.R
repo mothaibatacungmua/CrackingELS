@@ -25,3 +25,23 @@ gen_train_data <- function(){
 gen_test_data <- function(){
   return(gen_data(50, 50, 50))
 }
+
+gen_two_class_data <- function(){
+  Sigma = matrix(c(1, 0, 0, 1), nrow=2)
+  mu1 = c(7, 2) 
+  mu2 = c(2, 7)
+  
+  N1 = 200
+  N2 = 200
+  set.seed(1)
+  X_c1 = mvrnorm(N1, mu1, Sigma)
+  X_c2 = mvrnorm(N2, mu2, Sigma)
+  X = rbind(X_c1, X_c2)
+  X = cbind(rep(1, nrow(X)), X)
+  
+  y_c1 = rep(-1, N1)
+  y_c2 = rep(+1, N2)
+  y = c(y_c1, y_c2)
+  
+  return(list('X'=X,'y'=y))
+}
