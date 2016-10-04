@@ -1,14 +1,12 @@
 library(MASS)
 
-gen_data <- function(x){
-  n = length(x)
-  return(4*sin(-6*x+2) + rnorm(n, 0, 2))
-}
+source('./utils.R')
+dat = gen_data()
+x = dat$x
+y = dat$y
+real_y = real_y
 
-x = seq(from=0, to=1, length.out = 50)
-y = gen_data(x)
-real_y = 4*sin(-6*x+2)
-plot(x, real_y, xlab = "X", ylab = "Y", type="l", ylim = c(-6,6), cex=1.5)
+plot(x, real_y, xlab = "X", ylab = "Y", type="l", ylim = c(-6,6))
 points(x,y)
 
 
@@ -23,11 +21,8 @@ calc_cubic_spline_basis <- function(x, order, knot){
     return(x^(order-1))
   }
   
-  z = rep(0, length(x))
   v = (x - knot)^(order - 1)
-  ind = which(v > z)
-  z[ind] = v[ind]
-  return(z)
+  return(relu(v))
   
 }
 
