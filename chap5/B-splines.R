@@ -8,6 +8,10 @@ calc_b_spline <- function(x, knots, max_order, order, idx){
   internal_func <- function(x, aug_knots, m, i){
     #browser()
     B = rep(0, length(x))
+    if(i > (length(aug_knots) - m)){
+      return(B)
+    }
+    
     if(m == 1){
       if(aug_knots[i+1] == max(aug_knots)){
         indx = which(x >= aug_knots[i] & x <= aug_knots[i+1])  
@@ -60,18 +64,6 @@ b_spline <- function(x, knots, max_m, m, i){
   if(max(knots) >= max(x) | min(knots) <= min(x)){
     return(NULL)
   } 
-  
-  equal = FALSE
-  for(k in 1:length(knots)-1){
-    findk = which(knots == knots[k])
-    if(length(findk) >= 2){
-      equal = TRUE
-    } 
-  }
-  
-  if(equal){
-    return(NULL)
-  }
   
   added_boundary_knots = c(min(x), knots, max(x))
   y = calc_b_spline(x, added_boundary_knots, max_m, m, i)
