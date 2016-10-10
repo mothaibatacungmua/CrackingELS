@@ -4,7 +4,7 @@ source('./utils.R')
 dat = gen_data()
 x = dat$x
 y = dat$y
-real_y = real_y
+real_y = dat$real_y
 
 plot(x, real_y, xlab = "X", ylab = "Y", type="l", ylim = c(-6,6))
 points(x,y)
