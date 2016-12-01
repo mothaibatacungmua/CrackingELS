@@ -31,6 +31,9 @@ calc_discriminant_variables <- function(X, discr_coords){
   return(X %*% discr_coords)
 }
 
+# At here, I make a mistake, one should sphere data before reducing because
+# the covariance matrix of variables in X-sphered -> X-sphered-reduced not change
+# and equals I.
 discr_coords = calc_discriminant_coordinates(B, W)
 X_trans = calc_discriminant_variables(X_train, discr_coords)
 X_test_trans = calc_discriminant_variables(X_test, discr_coords)
@@ -43,5 +46,6 @@ for(i in 1:length(cols)){
   ycols[which(y_train==i)] = cols[i]
 }
 plot(X_trans[,1], X_trans[,2], col=ycols,bg=ycols, pch=21)
+
 
 lda_calc_error_wrapper(X_trans[,1:2] ,y_train, X_test_trans[,1:2], y_test)

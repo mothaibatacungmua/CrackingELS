@@ -9,7 +9,9 @@ source('./B-splines.R')
 # Note: I haven't researched about the computation of smoothing spline yet.
 # The below code just demonstrates in the ESL book but it's *very very* slow.
 # The ESL book didn't mention to the caculation of the penalty term in the
-# penalized residual sum of squares.
+# penalized residual sum of squares. However, the smoothing spline is a form 
+# of RKHS, so I think that it has a specific kernel function and we don't need
+# compute the penalty.
 
 create_basis_func <- function(x, idx){
   basis = function(input){
